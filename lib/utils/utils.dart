@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_snackbars/enums/animate_from.dart';
+import 'package:smart_snackbars/smart_snackbars.dart';
 
 bool isRequired(input) {
   RegExp requiredRegExp = RegExp(r"(.|\s)*\S(.|\s)*");
@@ -65,4 +68,65 @@ Future removeAuthToken() async {
 Future setAuthToken(String AUTH_TOKEN) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString("AUTH_TOKEN", AUTH_TOKEN);
+}
+
+showSnackBar(BuildContext context, errorMsg) {
+  SmartSnackBars.showTemplatedSnackbar(
+    context: context,
+    backgroundColor: Colors.red,
+    elevation: 5.0,
+    animateFrom: AnimateFrom.fromTop,
+    animationCurve: Curves.fastEaseInToSlowEaseOut,
+    leading: Container(
+      margin: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white.withOpacity(0.2),
+      ),
+      child: const Icon(
+        Icons.close,
+        color: Colors.white,
+      ),
+    ),
+    subTitleWidget: Text(
+      errorMsg,
+      style: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+      ),
+    ),
+  );
+}
+
+showSuccessSnackBar(BuildContext context, successMsg) {
+  SmartSnackBars.showTemplatedSnackbar(
+    context: context,
+    backgroundColor: Colors.green,
+    elevation: 5.0,
+    animateFrom: AnimateFrom.fromTop,
+    animationCurve: Curves.fastEaseInToSlowEaseOut,
+    leading: Container(
+      margin: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white.withOpacity(0.2),
+      ),
+      child: const Icon(
+        Icons.check,
+        color: Colors.white,
+      ),
+    ),
+    subTitleWidget: Text(
+      successMsg,
+      style: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+      ),
+      maxLines: 2,
+    ),
+  );
 }

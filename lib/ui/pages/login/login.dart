@@ -1,7 +1,15 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:talkrr/core/providers/api.dart';
 import 'package:talkrr/utils/colors.dart';
 import 'package:talkrr/ui/pages/register/register.dart';
 import 'package:talkrr/utils/images.dart';
+import 'package:talkrr/core/redux/actions/account_actions.dart';
+import 'package:talkrr/core/redux/stores/app_state.dart';
+import 'package:talkrr/utils/utils.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -11,6 +19,48 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final api _api = api();
+  final TextEditingController usernameController =
+      TextEditingController(text: "demo@gmail.com");
+  final TextEditingController passwordController =
+      TextEditingController(text: "1234");
+  bool isProcessing = false;
+
+  Future<void> authentication() async {
+    setState(() {
+      isProcessing = true;
+    });
+    await _api
+        .authentication(usernameController.text, passwordController.text)
+        .then((dynamic response) async {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        Map<String, dynamic> RESPONSE = data['RESPONSE'];
+        if (kDebugMode) {
+          print(RESPONSE);
+        }
+        if (RESPONSE["isVerified"] && RESPONSE["isLoggedIn"]) {
+          final store = StoreProvider.of<AppState>(context);
+          store.dispatch(SetLoggedInAction(RESPONSE["token"]));
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/tabs", (Route<dynamic> route) => false);
+        }
+      } else if (response.statusCode == 400) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        Map<String, dynamic> RESPONSE = data['RESPONSE'];
+        if (kDebugMode) {
+          print(RESPONSE);
+        }
+        showSnackBar(context, RESPONSE["error_message"]);
+      } else {
+        showSnackBar(context, "Something went wrong. Please try again later.");
+      }
+      setState(() {
+        isProcessing = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget _buildEmailTextField() {
@@ -27,19 +77,26 @@ class _LoginState extends State<Login> {
           const SizedBox(
             width: 10.0,
           ),
-          const Expanded(
+          Expanded(
             child: TextField(
-              style: TextStyle(
+              enabled: !isProcessing,
+              controller: usernameController,
+              style: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
               ),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Email ID",
                 hintStyle: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w500,
                   color: kInputColor,
+                ),
+                disabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: kInputColor,
+                  ),
                 ),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -77,20 +134,27 @@ class _LoginState extends State<Login> {
           const SizedBox(
             width: 10.0,
           ),
-          const Expanded(
+          Expanded(
             child: TextField(
+              enabled: !isProcessing,
+              controller: passwordController,
               obscureText: true,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
               ),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Password",
                 hintStyle: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w500,
                   color: kInputColor,
+                ),
+                disabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: kInputColor,
+                  ),
                 ),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -124,16 +188,23 @@ class _LoginState extends State<Login> {
             borderRadius: BorderRadius.circular(13.0),
           ),
           color: kButtonColor,
+          disabledColor: kButtonColor,
           padding: const EdgeInsets.symmetric(vertical: 18.0),
-          onPressed: () => {},
-          child: const Text(
-            "Login",
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          onPressed: isProcessing ? null : () => authentication(),
+          child: isProcessing
+              ? const SpinKitThreeBounce(
+                  duration: Duration(milliseconds: 800),
+                  color: Colors.white,
+                  size: 20.0,
+                )
+              : const Text(
+                  "Login",
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
         ),
       );
     }

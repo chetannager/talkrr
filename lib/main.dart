@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:talkrr/ui/pages/login/login.dart';
+import 'package:talkrr/ui/pages/register/register.dart';
 import 'package:talkrr/ui/pages/splash/splash.dart';
+import 'package:talkrr/ui/pages/tabs/tabs.dart';
 import 'package:talkrr/utils/colors.dart';
 import 'core/redux/reducers/index.dart';
 import 'core/redux/stores/account_state.dart';
@@ -42,6 +45,7 @@ class MyApp extends StatelessWidget {
     return StoreProvider<AppState>(
       store: store,
       child: MaterialApp(
+        themeMode: ThemeMode.dark,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           scaffoldBackgroundColor: kPrimaryColor,
@@ -63,6 +67,11 @@ class MyApp extends StatelessWidget {
           useMaterial3: false,
         ),
         home: const Splash(),
+        routes: {
+          "/tabs": (context) => const Tabs(),
+          "/login": (context) => const Login(),
+          "/register": (context) => const Register(),
+        },
       ),
     );
   }

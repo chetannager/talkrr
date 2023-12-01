@@ -64,7 +64,7 @@ class _RegisterState extends State<Register> {
 
     Widget _buildNameTextField() {
       return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             margin: const EdgeInsets.only(top: 8.0),
@@ -112,14 +112,14 @@ class _RegisterState extends State<Register> {
       );
     }
 
-    Widget _buildMobileTextField() {
+    Widget buildPasswordTextField() {
       return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             margin: const EdgeInsets.only(top: 8.0),
             child: const Icon(
-              Icons.call_outlined,
+              Icons.lock_outlined,
               color: kInputColor,
             ),
           ),
@@ -128,16 +128,14 @@ class _RegisterState extends State<Register> {
           ),
           const Expanded(
             child: TextField(
-              maxLength: 10,
-              keyboardType: TextInputType.number,
+              obscureText: true,
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
               decoration: InputDecoration(
-                counter: Offstage(),
-                hintText: "Mobile",
+                hintText: "Password",
                 hintStyle: TextStyle(
                   fontSize: 17.5,
                   fontWeight: FontWeight.w500,
@@ -173,6 +171,7 @@ class _RegisterState extends State<Register> {
           elevation: 0.0,
           highlightElevation: 0.0,
           color: kButtonColor,
+          disabledColor: kButtonColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(13.0),
           ),
@@ -243,7 +242,7 @@ class _RegisterState extends State<Register> {
                     const SizedBox(
                       height: 25.0,
                     ),
-                    _buildMobileTextField(),
+                    buildPasswordTextField(),
                     const SizedBox(
                       height: 25.0,
                     ),

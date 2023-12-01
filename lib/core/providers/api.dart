@@ -3,40 +3,63 @@ import 'package:talkrr/utils/endpoints.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+const Duration requestTimeout = Duration(seconds: 10);
+
 class api {
+  // Login :: Authentication APIs
   Future<dynamic> authentication(username, password) async {
     final Map<String, dynamic> requestData = {
       "username": username,
       "password": password
     };
-    final http.Response response = await http.post(
-      Uri.parse("${Endpoints.baseAPIUrl}authentication"),
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: json.encode(requestData),
-    );
+    final http.Response response = await http
+        .post(
+          Uri.parse("${Endpoints.baseAPIUrl}authentication"),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: json.encode(requestData),
+        )
+        .timeout(requestTimeout);
     if (kDebugMode) {
       print("statusCode:${response.statusCode}");
     }
     return response;
   }
 
+  // Register :: Register APIs
   Future<dynamic> register(username, fullname, password) async {
     final Map<String, dynamic> requestData = {
       "username": username,
       "fullname": fullname,
       "password": password
     };
-    final http.Response response = await http.post(
-      Uri.parse("${Endpoints.baseAPIUrl}register"),
+    final http.Response response = await http
+        .post(
+          Uri.parse("${Endpoints.baseAPIUrl}register"),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: json.encode(requestData),
+        )
+        .timeout(requestTimeout);
+    if (kDebugMode) {
+      print("statusCode:${response.statusCode}");
+    }
+    return response;
+  }
+
+  // Orders :: Get All Orders APIs
+  Future<dynamic> getAllCalls(authToken) async {
+    final http.Response response = await http.get(
+      Uri.parse("${Endpoints.baseAPIUrl}"),
       headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
+        "Authorization": "Bearer $authToken",
+        "Accept": "application/json"
       },
-      body: json.encode(requestData),
-    );
+    ).timeout(requestTimeout);
     if (kDebugMode) {
       print("statusCode:${response.statusCode}");
     }
