@@ -51,6 +51,21 @@ class api {
     return response;
   }
 
+  // New Call :: Get All Users APIs
+  Future<dynamic> getAllUsers(authToken) async {
+    final http.Response response = await http.get(
+      Uri.parse("${Endpoints.baseAPIUrl}users"),
+      headers: {
+        "Authorization": "Bearer $authToken",
+        "Accept": "application/json"
+      },
+    ).timeout(requestTimeout);
+    if (kDebugMode) {
+      print("statusCode:${response.statusCode}");
+    }
+    return response;
+  }
+
   // Orders :: Get All Orders APIs
   Future<dynamic> getAllCalls(authToken) async {
     final http.Response response = await http.get(

@@ -13,7 +13,6 @@ class Tabs extends StatefulWidget {
 class _TabsState extends State<Tabs> {
   int currentIndex = 0;
   List pages = [
-    const Meeting(),
     const Recents(),
     const Account(),
   ];
@@ -42,10 +41,10 @@ class _TabsState extends State<Tabs> {
         ),
         backgroundColor: const Color.fromRGBO(33, 36, 42, 1),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.video_call),
-            label: "Meeting",
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.video_call),
+          //   label: "Meeting",
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.access_time_filled),
             label: "Recent",

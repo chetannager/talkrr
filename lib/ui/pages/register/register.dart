@@ -10,6 +10,14 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController fullnameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  final FocusNode usernameFocusNode = FocusNode();
+  final FocusNode fullnameFocusNode = FocusNode();
+  final FocusNode passwordFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     Widget _buildEmailTextField() {
@@ -26,14 +34,16 @@ class _RegisterState extends State<Register> {
           const SizedBox(
             width: 10.0,
           ),
-          const Expanded(
+          Expanded(
             child: TextField(
-              style: TextStyle(
+              controller: usernameController,
+              focusNode: usernameFocusNode,
+              style: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Email ID",
                 hintStyle: TextStyle(
                   fontSize: 17.5,
@@ -76,14 +86,17 @@ class _RegisterState extends State<Register> {
           const SizedBox(
             width: 10.0,
           ),
-          const Expanded(
+          Expanded(
             child: TextField(
-              style: TextStyle(
+              controller: fullnameController,
+              focusNode: fullnameFocusNode,
+              style: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
-              decoration: InputDecoration(
+              textCapitalization: TextCapitalization.words,
+              decoration: const InputDecoration(
                 hintText: "Full Name",
                 hintStyle: TextStyle(
                   fontSize: 17.5,
@@ -126,15 +139,17 @@ class _RegisterState extends State<Register> {
           const SizedBox(
             width: 10.0,
           ),
-          const Expanded(
+          Expanded(
             child: TextField(
+              controller: passwordController,
+              focusNode: passwordFocusNode,
               obscureText: true,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Password",
                 hintStyle: TextStyle(
                   fontSize: 17.5,

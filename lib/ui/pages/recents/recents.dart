@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:talkrr/ui/pages/meeting/meeting.dart';
 import 'package:talkrr/utils/colors.dart';
 
 class Recents extends StatefulWidget {
@@ -94,6 +95,13 @@ class _RecentsState extends State<Recents> {
                         .toList(),
                   ),
                 ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Meeting())),
+        child: const Icon(
+          Icons.video_call,
+        ),
+      ),
     );
   }
 }

@@ -20,10 +20,9 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final api _api = api();
-  final TextEditingController usernameController =
-      TextEditingController(text: "demo@gmail.com");
-  final TextEditingController passwordController =
-      TextEditingController(text: "1234");
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   bool isProcessing = false;
 
   Future<void> authentication() async {
@@ -78,9 +77,9 @@ class _LoginState extends State<Login> {
             width: 10.0,
           ),
           Expanded(
-            child: TextField(
-              enabled: !isProcessing,
+            child: TextFormField(
               controller: usernameController,
+              enabled: !isProcessing,
               style: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w500,
@@ -114,6 +113,12 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  //return 'Please enter email address!';
+                }
+                return null;
+              },
             ),
           )
         ],
@@ -135,9 +140,9 @@ class _LoginState extends State<Login> {
             width: 10.0,
           ),
           Expanded(
-            child: TextField(
-              enabled: !isProcessing,
+            child: TextFormField(
               controller: passwordController,
+              enabled: !isProcessing,
               obscureText: true,
               style: const TextStyle(
                 fontSize: 18.0,
@@ -172,6 +177,12 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter password!';
+                }
+                return null;
+              },
             ),
           )
         ],
@@ -190,7 +201,16 @@ class _LoginState extends State<Login> {
           color: kButtonColor,
           disabledColor: kButtonColor,
           padding: const EdgeInsets.symmetric(vertical: 18.0),
-          onPressed: isProcessing ? null : () => authentication(),
+          onPressed: isProcessing
+              ? null
+              : () {
+                  // Validate returns true if the form is valid, or false otherwise.
+                  if (_formKey.currentState!.validate()) {
+                    // If the form is valid, display a snackbar. In the real world,
+                    // you'd often call a server or save the information in a database.
+                    authentication();
+                  }
+                },
           child: isProcessing
               ? const SpinKitThreeBounce(
                   duration: Duration(milliseconds: 800),
@@ -264,50 +284,53 @@ class _LoginState extends State<Login> {
               ),
               Expanded(
                 flex: 6,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 36.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent.shade700,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 36.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent.shade700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                    _buildEmailTextField(),
-                    const SizedBox(
-                      height: 30.0,
-                    ),
-                    _buildPasswordTextField(),
-                    const SizedBox(
-                      height: 25.0,
-                    ),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        // onTap: () => Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => ForgotPassword())),
-                        child: const Text(
-                          "Forgot Password?",
-                          style: TextStyle(
-                            fontSize: 17.0,
-                            color: kLinkColor,
-                            fontWeight: FontWeight.w600,
+                      const SizedBox(
+                        height: 20.0,
+                      ),
+                      _buildEmailTextField(),
+                      const SizedBox(
+                        height: 30.0,
+                      ),
+                      _buildPasswordTextField(),
+                      const SizedBox(
+                        height: 25.0,
+                      ),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          // onTap: () => Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => ForgotPassword())),
+                          child: const Text(
+                            "Forgot Password?",
+                            style: TextStyle(
+                              fontSize: 17.0,
+                              color: kLinkColor,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 25.0,
-                    ),
-                    _buildLoginBtn()
-                  ],
+                      const SizedBox(
+                        height: 25.0,
+                      ),
+                      _buildLoginBtn()
+                    ],
+                  ),
                 ),
               ),
               Expanded(
@@ -356,7 +379,7 @@ class _LoginState extends State<Login> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "New to Logistics",
+                          "New to Talkrr",
                           style: TextStyle(
                             fontSize: 17.0,
                             color: kTextColor,
@@ -368,9 +391,11 @@ class _LoginState extends State<Login> {
                         ),
                         GestureDetector(
                           onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Register())),
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Register(),
+                            ),
+                          ),
                           child: const Text(
                             "Register",
                             style: TextStyle(

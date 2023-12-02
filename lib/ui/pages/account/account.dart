@@ -52,8 +52,6 @@ class _AccountState extends State<Account> {
                           child: CircleAvatar(
                             maxRadius: 50,
                             backgroundColor: Colors.grey[200],
-                            // backgroundImage:
-                            //     const AssetImage(Images.USER_AVATAR),
                           ),
                         ),
                         const SizedBox(
@@ -65,18 +63,18 @@ class _AccountState extends State<Account> {
                           children: <Widget>[
                             Text(
                               "${userDetails["userFullName"]}",
-                              style: const TextStyle(
+                              style: GoogleFonts.montserrat(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 22.0,
-                                fontFamily: 'Montserrat',
+                                fontSize: 24.0,
+                                color: Colors.white,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               '${userDetails["userEmailAddress"]}',
-                              style: const TextStyle(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 18.0,
-                                fontFamily: 'Montserrat',
+                                color: Colors.white,
                               ),
                             ),
                             const SizedBox(
