@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "744337256316",
+    "project_id": "talkrr-b4c81",
+    "storage_bucket": "talkrr-b4c81.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744337256316:android:732ab6bac4b85143893ef9",
+        "android_client_info": {
+          "package_name": "com.example.talkrr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkP4t8KzdQ0kemiw8sk4c7fRAT7X6LhC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

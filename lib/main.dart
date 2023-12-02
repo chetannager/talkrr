@@ -1,5 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:talkrr/ui/pages/login/login.dart';
@@ -10,9 +14,20 @@ import 'package:talkrr/utils/colors.dart';
 import 'core/redux/reducers/index.dart';
 import 'core/redux/stores/account_state.dart';
 import 'core/redux/stores/app_state.dart';
+import 'dart:math';
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('ic_stat_video_call');
+const InitializationSettings initializationSettings = InitializationSettings(
+  android: initializationSettingsAndroid,
+);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   final Store<AppState> store = Store<AppState>(
     rootReducers,
     initialState: AppState(
@@ -42,6 +57,17 @@ class MyApp extends StatelessWidget {
         statusBarColor: Colors.transparent,
       ),
     );
+    FirebaseMessaging.instance.getToken().then((token) {
+      if (kDebugMode) {
+        print(token);
+      }
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        showLocalPushNotification(message.notification?.title,
+            message.notification?.body, message.data.toString());
+      }
+    });
     return StoreProvider<AppState>(
       store: store,
       child: MaterialApp(
@@ -75,4 +101,24 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+dynamic showLocalPushNotification(
+    String? title, String? body, String? payload) async {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+    '2121173314',
+    'Notification Channel',
+    channelDescription: 'your channel description',
+    importance: Importance.max,
+    priority: Priority.high,
+    ticker: 'ticker',
+  );
+  const NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin.show(
+      Random().nextInt(1000), title, body, platformChannelSpecifics,
+      payload: payload);
 }

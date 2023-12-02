@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:talkrr/utils/endpoints.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -109,5 +110,29 @@ class api {
       print("statusCode:${response.statusCode}");
     }
     return response;
+  }
+
+  // Login :: Subscribe Device to Account APIs
+  Future<dynamic> subscribeDeviceToAccount(authToken) async {
+    FirebaseMessaging.instance.getToken().then((value) async {
+      final Map<String, dynamic> requestData = {
+        'registrationToken': value,
+      };
+      if (kDebugMode) {
+        print("requestData:${json.encode(requestData)}");
+      }
+      final http.Response response = await http.post(
+          Uri.parse("${Endpoints.baseAPIUrl}subscribeDeviceToAccount"),
+          headers: {
+            "Authorization": "Bearer $authToken",
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: json.encode(requestData));
+      if (kDebugMode) {
+        print("statusCode:${response.statusCode}");
+      }
+      return response;
+    });
   }
 }

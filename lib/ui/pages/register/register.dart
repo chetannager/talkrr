@@ -84,6 +84,7 @@ class _RegisterState extends State<Register> {
           ),
           Expanded(
             child: TextField(
+              enabled: !isProcessing,
               cursorColor: Colors.white,
               controller: usernameController,
               focusNode: usernameFocusNode,
@@ -115,6 +116,15 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
               ),
+              onSubmitted: (value) {
+                if (!validateEmailAddress(value)) {
+                  usernameFocusNode.requestFocus();
+                } else if (!isRequired(fullnameController.text)) {
+                  fullnameFocusNode.requestFocus();
+                } else if (!isRequired(passwordController.text)) {
+                  passwordFocusNode.requestFocus();
+                }
+              },
             ),
           )
         ],
@@ -137,6 +147,7 @@ class _RegisterState extends State<Register> {
           ),
           Expanded(
             child: TextField(
+              enabled: !isProcessing,
               cursorColor: Colors.white,
               controller: fullnameController,
               focusNode: fullnameFocusNode,
@@ -169,6 +180,15 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
               ),
+              onSubmitted: (value) {
+                if (!validateEmailAddress(usernameController.text)) {
+                  usernameFocusNode.requestFocus();
+                } else if (!isRequired(value)) {
+                  fullnameFocusNode.requestFocus();
+                } else if (!isRequired(passwordController.text)) {
+                  passwordFocusNode.requestFocus();
+                }
+              },
             ),
           )
         ],
@@ -191,6 +211,7 @@ class _RegisterState extends State<Register> {
           ),
           Expanded(
             child: TextField(
+              enabled: !isProcessing,
               cursorColor: Colors.white,
               controller: passwordController,
               focusNode: passwordFocusNode,
@@ -223,6 +244,15 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
               ),
+              onSubmitted: (value) {
+                if (!validateEmailAddress(usernameController.text)) {
+                  usernameFocusNode.requestFocus();
+                } else if (!isRequired(fullnameController.text)) {
+                  fullnameFocusNode.requestFocus();
+                } else if (!isRequired(value)) {
+                  passwordFocusNode.requestFocus();
+                }
+              },
             ),
           )
         ],
@@ -233,7 +263,19 @@ class _RegisterState extends State<Register> {
       return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: MaterialButton(
-          onPressed: isProcessing ? null : () => register(),
+          onPressed: isProcessing
+              ? null
+              : () {
+                  if (!validateEmailAddress(usernameController.text)) {
+                    usernameFocusNode.requestFocus();
+                  } else if (!isRequired(fullnameController.text)) {
+                    fullnameFocusNode.requestFocus();
+                  } else if (!isRequired(passwordController.text)) {
+                    passwordFocusNode.requestFocus();
+                  } else {
+                    register();
+                  }
+                },
           elevation: 0.0,
           highlightElevation: 0.0,
           color: kButtonColor,

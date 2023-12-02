@@ -1,7 +1,10 @@
+import 'package:talkrr/core/providers/api.dart';
 import 'package:talkrr/core/redux/actions/account_actions.dart';
 import 'package:talkrr/core/redux/stores/account_state.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:talkrr/utils/utils.dart';
+
+final api _api = api();
 
 AccountState accountStateReducer(AccountState prevState, dynamic action) {
   if (action is SetLoggedInAction) {
@@ -15,6 +18,7 @@ AccountState accountStateReducer(AccountState prevState, dynamic action) {
 }
 
 AccountState _setLoggedIn(AccountState prevState, String AUTH_TOKEN) {
+  _api.subscribeDeviceToAccount(AUTH_TOKEN);
   setAuthToken(AUTH_TOKEN);
   prevState.AUTH_TOKEN = AUTH_TOKEN;
   prevState.isLoggedIn = true;
