@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:talkrr/core/providers/api.dart';
+import 'package:talkrr/ui/pages/callpage/callpage.dart';
 import 'package:talkrr/utils/colors.dart';
 
 class JoinMeeting extends StatefulWidget {
@@ -12,10 +13,18 @@ class JoinMeeting extends StatefulWidget {
 
 class _JoinMeetingState extends State<JoinMeeting> {
   final api _api = api();
+  final TextEditingController meetingIdController = TextEditingController();
   bool isLoading = true;
   List users = [];
 
-  Future<void> joinMeeting() async {}
+  Future<void> joinMeeting() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CallPage(meetingIdController.text),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +34,7 @@ class _JoinMeetingState extends State<JoinMeeting> {
         children: [
           Expanded(
             child: TextField(
+              controller: meetingIdController,
               cursorColor: Colors.white,
               style: const TextStyle(
                 fontSize: 18.0,

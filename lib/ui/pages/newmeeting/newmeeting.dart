@@ -7,12 +7,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:talkrr/core/providers/api.dart';
-import 'package:talkrr/ui/pages/callpage/callpage.dart';
-import 'package:talkrr/utils/constants.dart';
-import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:talkrr/core/redux/actions/account_actions.dart';
 import 'package:talkrr/core/redux/stores/app_state.dart';
 import 'package:talkrr/utils/utils.dart';
+
+import '../callpage/callpage.dart';
 
 class NewMeeting extends StatefulWidget {
   const NewMeeting({super.key});
@@ -24,6 +23,7 @@ class NewMeeting extends StatefulWidget {
 class _NewMeetingState extends State<NewMeeting> {
   final api _api = api();
   bool isLoading = true;
+  bool isProcessing = false;
   List users = [];
 
   Future<void> fetchAllUsers() async {
@@ -60,17 +60,48 @@ class _NewMeetingState extends State<NewMeeting> {
     }
   }
 
-  Future<void> createEngine() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await ZegoExpressEngine.createEngineWithProfile(ZegoEngineProfile(
-      Constants.zegoAppId,
-      ZegoScenario.Default,
-      appSign: Constants.zegoAppSign,
-    ));
-  }
-
-  Future<void> createMeeting() async {
-    createEngine();
+  Future<void> createCall(receiverId) async {
+    setState(() {
+      isProcessing = true;
+    });
+    dynamic store = StoreProvider.of<AppState>(context);
+    String AUTH_TOKEN = store.state.account.AUTH_TOKEN;
+    if (!JwtDecoder.isExpired(AUTH_TOKEN)) {
+      await _api
+          .createCall(AUTH_TOKEN, receiverId)
+          .then((dynamic response) async {
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> data = json.decode(response.body);
+          Map<String, dynamic> RESPONSE = data['RESPONSE'];
+          if (kDebugMode) {
+            print(RESPONSE);
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CallPage(RESPONSE["callId"]),
+            ),
+          );
+        } else if (response.statusCode == 400) {
+          final Map<String, dynamic> data = json.decode(response.body);
+          Map<String, dynamic> RESPONSE = data['RESPONSE'];
+          if (kDebugMode) {
+            print(RESPONSE);
+          }
+          showSnackBar(context, RESPONSE["error_message"]);
+        } else {
+          showSnackBar(
+              context, "Something went wrong. Please try again later.");
+        }
+        setState(() {
+          isProcessing = false;
+        });
+      });
+    } else {
+      showSnackBar(
+          context, "Unauthorized::Session expired. Please login again!");
+      store.dispatch(LogoutAction());
+    }
   }
 
   @override
@@ -132,16 +163,9 @@ class _NewMeetingState extends State<NewMeeting> {
                                     ),
                                   ),
                                   trailing: IconButton(
-                                    onPressed: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CallPage(
-                                          user["userId"],
-                                          user["userFullName"],
-                                          "jdkfhjgj",
-                                        ),
-                                      ),
-                                    ),
+                                    onPressed: isProcessing
+                                        ? null
+                                        : () => createCall(user["userId"]),
                                     icon: const Icon(
                                       Icons.video_call_sharp,
                                       color: Colors.white,

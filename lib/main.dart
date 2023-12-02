@@ -64,6 +64,7 @@ class MyApp extends StatelessWidget {
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
+        print(message.data.toString());
         showLocalPushNotification(message.notification?.title,
             message.notification?.body, message.data.toString());
       }

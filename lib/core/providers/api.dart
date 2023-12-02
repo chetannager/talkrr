@@ -89,7 +89,7 @@ class api {
   }
 
   // Call :: Create Call APIs
-  Future<dynamic> createCall(receiverId) async {
+  Future<dynamic> createCall(authToken, receiverId) async {
     final Map<String, dynamic> requestData = {
       "receiverId": receiverId,
     };
@@ -100,6 +100,7 @@ class api {
         .post(
           Uri.parse("${Endpoints.baseAPIUrl}call"),
           headers: {
+            "Authorization": "Bearer $authToken",
             "Content-Type": "application/json",
             "Accept": "application/json",
           },
