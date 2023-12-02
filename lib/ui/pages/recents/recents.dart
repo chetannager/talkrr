@@ -5,6 +5,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:talkrr/ui/pages/joinmeeting/joinmeeting.dart';
 import 'package:talkrr/ui/pages/newmeeting/newmeeting.dart';
 import 'package:talkrr/core/providers/api.dart';
 import 'package:talkrr/core/redux/actions/account_actions.dart';
@@ -116,8 +117,10 @@ class _RecentsState extends State<Recents> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => NewMeeting())),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const NewMeeting())),
                   child: Column(
                     children: [
                       Container(
@@ -147,32 +150,38 @@ class _RecentsState extends State<Recents> {
                   ),
                 ),
                 const SizedBox(width: 80.0),
-                Column(
-                  children: [
-                    Container(
-                      height: 80.0,
-                      width: 80.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: const Color.fromRGBO(2, 129, 170, 1),
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const JoinMeeting())),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 80.0,
+                        width: 80.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: const Color.fromRGBO(2, 129, 170, 1),
+                        ),
+                        child: const Icon(
+                          Icons.link_sharp,
+                          size: 30.0,
+                          color: Color.fromRGBO(193, 194, 195, 1),
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.link_sharp,
-                        size: 30.0,
-                        color: Color.fromRGBO(193, 194, 195, 1),
+                      const SizedBox(
+                        height: 15.0,
                       ),
-                    ),
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                    const Text(
-                      "Join",
-                      style: TextStyle(
-                        color: Color.fromRGBO(193, 194, 195, 1),
-                        fontSize: 17.0,
+                      const Text(
+                        "Join",
+                        style: TextStyle(
+                          color: Color.fromRGBO(193, 194, 195, 1),
+                          fontSize: 17.0,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 // Column(
                 //   children: [
