@@ -57,7 +57,7 @@ class api {
     return response;
   }
 
-  // New Call :: Get All Users APIs
+  // Users :: Get All Users APIs
   Future<dynamic> getAllUsers(authToken) async {
     final http.Response response = await http.get(
       Uri.parse("${Endpoints.baseAPIUrl}users"),
@@ -72,15 +72,39 @@ class api {
     return response;
   }
 
-  // Orders :: Get All Orders APIs
+  // Calls :: Get All Recent Calls APIs
   Future<dynamic> getAllCalls(authToken) async {
     final http.Response response = await http.get(
-      Uri.parse("${Endpoints.baseAPIUrl}"),
+      Uri.parse("${Endpoints.baseAPIUrl}calls"),
       headers: {
         "Authorization": "Bearer $authToken",
         "Accept": "application/json"
       },
     ).timeout(requestTimeout);
+    if (kDebugMode) {
+      print("statusCode:${response.statusCode}");
+    }
+    return response;
+  }
+
+  // Call :: Create Call APIs
+  Future<dynamic> createCall(receiverId) async {
+    final Map<String, dynamic> requestData = {
+      "receiverId": receiverId,
+    };
+    if (kDebugMode) {
+      print("requestData:${json.encode(requestData)}");
+    }
+    final http.Response response = await http
+        .post(
+          Uri.parse("${Endpoints.baseAPIUrl}call"),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: json.encode(requestData),
+        )
+        .timeout(requestTimeout);
     if (kDebugMode) {
       print("statusCode:${response.statusCode}");
     }

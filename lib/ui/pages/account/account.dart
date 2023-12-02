@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:redux/redux.dart';
@@ -15,9 +16,9 @@ class Account extends StatefulWidget {
 class _AccountState extends State<Account> {
   void logout() {
     Store store = StoreProvider.of<AppState>(context);
-    store.dispatch(LogoutAction());
     Navigator.pushNamedAndRemoveUntil(
         context, "/login", (Route<dynamic> route) => false);
+    store.dispatch(LogoutAction());
   }
 
   @override
@@ -49,9 +50,10 @@ class _AccountState extends State<Account> {
                       children: <Widget>[
                         Hero(
                           tag: "profile_picture",
-                          child: CircleAvatar(
-                            maxRadius: 50,
-                            backgroundColor: Colors.grey[200],
+                          child: ProfilePicture(
+                            name: userDetails["userFullName"],
+                            radius: 50,
+                            fontsize: 28,
                           ),
                         ),
                         const SizedBox(
@@ -77,29 +79,29 @@ class _AccountState extends State<Account> {
                                 color: Colors.white,
                               ),
                             ),
-                            const SizedBox(
-                              height: 4.0,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(left: 3.0),
-                              child: GestureDetector(
-                                // onTap: () => Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         const EditProfile(),
-                                //   ),
-                                // ),
-                                child: const Text(
-                                  "Edit Profile",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.blue,
-                                    fontFamily: 'Montserrat',
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // const SizedBox(
+                            //   height: 4.0,
+                            // ),
+                            // Container(
+                            //   margin: const EdgeInsets.only(left: 3.0),
+                            //   child: GestureDetector(
+                            //     // onTap: () => Navigator.push(
+                            //     //   context,
+                            //     //   MaterialPageRoute(
+                            //     //     builder: (context) =>
+                            //     //         const EditProfile(),
+                            //     //   ),
+                            //     // ),
+                            //     child: const Text(
+                            //       "Edit Profile",
+                            //       style: TextStyle(
+                            //         fontSize: 16.0,
+                            //         color: Colors.blue,
+                            //         fontFamily: 'Montserrat',
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         )
                       ],

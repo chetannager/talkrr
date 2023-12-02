@@ -116,6 +116,13 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
+              onSubmitted: (value) {
+                if (!validateEmailAddress(value)) {
+                  usernameFocusNode.requestFocus();
+                } else if (!isRequired(passwordController.text)) {
+                  passwordFocusNode.requestFocus();
+                }
+              },
             ),
           )
         ],
@@ -176,6 +183,13 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
+              onSubmitted: (value) {
+                if (!validateEmailAddress(usernameController.text)) {
+                  usernameFocusNode.requestFocus();
+                } else if (!isRequired(value)) {
+                  passwordFocusNode.requestFocus();
+                }
+              },
             ),
           )
         ],

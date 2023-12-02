@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:talkrr/ui/pages/account/account.dart';
-import 'package:talkrr/ui/pages/meeting/meeting.dart';
 import 'package:talkrr/ui/pages/recents/recents.dart';
 
 class Tabs extends StatefulWidget {
@@ -47,7 +46,7 @@ class _TabsState extends State<Tabs> {
           // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.access_time_filled),
-            label: "Recent",
+            label: "Home",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
