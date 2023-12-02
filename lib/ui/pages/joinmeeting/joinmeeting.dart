@@ -15,6 +15,8 @@ class _JoinMeetingState extends State<JoinMeeting> {
   bool isLoading = true;
   List users = [];
 
+  Future<void> joinMeeting() async {}
+
   @override
   Widget build(BuildContext context) {
     Widget _buildMeetingIdTextField() {
@@ -75,7 +77,7 @@ class _JoinMeetingState extends State<JoinMeeting> {
           color: kButtonColor,
           disabledColor: kButtonColor,
           padding: const EdgeInsets.symmetric(vertical: 18.0),
-          onPressed: () => {},
+          onPressed: () => joinMeeting(),
           child: const Text(
             "Join",
             style: TextStyle(
