@@ -20,9 +20,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final api _api = api();
-  final _formKey = GlobalKey<FormState>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final FocusNode usernameFocusNode = FocusNode();
+  final FocusNode passwordFocusNode = FocusNode();
   bool isProcessing = false;
 
   Future<void> authentication() async {
@@ -77,8 +78,10 @@ class _LoginState extends State<Login> {
             width: 10.0,
           ),
           Expanded(
-            child: TextFormField(
+            child: TextField(
+              cursorColor: Colors.white,
               controller: usernameController,
+              focusNode: usernameFocusNode,
               enabled: !isProcessing,
               style: const TextStyle(
                 fontSize: 18.0,
@@ -113,12 +116,6 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  //return 'Please enter email address!';
-                }
-                return null;
-              },
             ),
           )
         ],
@@ -140,8 +137,10 @@ class _LoginState extends State<Login> {
             width: 10.0,
           ),
           Expanded(
-            child: TextFormField(
+            child: TextField(
+              cursorColor: Colors.white,
               controller: passwordController,
+              focusNode: passwordFocusNode,
               enabled: !isProcessing,
               obscureText: true,
               style: const TextStyle(
@@ -177,12 +176,6 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter password!';
-                }
-                return null;
-              },
             ),
           )
         ],
@@ -204,10 +197,11 @@ class _LoginState extends State<Login> {
           onPressed: isProcessing
               ? null
               : () {
-                  // Validate returns true if the form is valid, or false otherwise.
-                  if (_formKey.currentState!.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
+                  if (!validateEmailAddress(usernameController.text)) {
+                    usernameFocusNode.requestFocus();
+                  } else if (!isRequired(passwordController.text)) {
+                    passwordFocusNode.requestFocus();
+                  } else {
                     authentication();
                   }
                 },
@@ -284,53 +278,50 @@ class _LoginState extends State<Login> {
               ),
               Expanded(
                 flex: 6,
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Login",
-                        style: TextStyle(
-                          fontSize: 36.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent.shade700,
-                        ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Login",
+                      style: TextStyle(
+                        fontSize: 36.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueAccent.shade700,
                       ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      _buildEmailTextField(),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
-                      _buildPasswordTextField(),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          // onTap: () => Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => ForgotPassword())),
-                          child: const Text(
-                            "Forgot Password?",
-                            style: TextStyle(
-                              fontSize: 17.0,
-                              color: kLinkColor,
-                              fontWeight: FontWeight.w600,
-                            ),
+                    ),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                    _buildEmailTextField(),
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                    _buildPasswordTextField(),
+                    const SizedBox(
+                      height: 25.0,
+                    ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        // onTap: () => Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => ForgotPassword())),
+                        child: const Text(
+                          "Forgot Password?",
+                          style: TextStyle(
+                            fontSize: 17.0,
+                            color: kLinkColor,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-                      _buildLoginBtn()
-                    ],
-                  ),
+                    ),
+                    const SizedBox(
+                      height: 25.0,
+                    ),
+                    _buildLoginBtn()
+                  ],
                 ),
               ),
               Expanded(

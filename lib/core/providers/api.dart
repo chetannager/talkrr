@@ -12,6 +12,9 @@ class api {
       "username": username,
       "password": password
     };
+    if (kDebugMode) {
+      print("requestData:${json.encode(requestData)}");
+    }
     final http.Response response = await http
         .post(
           Uri.parse("${Endpoints.baseAPIUrl}authentication"),
@@ -31,10 +34,13 @@ class api {
   // Register :: Register APIs
   Future<dynamic> register(username, fullname, password) async {
     final Map<String, dynamic> requestData = {
-      "username": username,
-      "fullname": fullname,
+      "emailAddress": username,
+      "fullName": fullname,
       "password": password
     };
+    if (kDebugMode) {
+      print("requestData:${json.encode(requestData)}");
+    }
     final http.Response response = await http
         .post(
           Uri.parse("${Endpoints.baseAPIUrl}register"),

@@ -1,6 +1,14 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:talkrr/core/providers/api.dart';
 import 'package:talkrr/utils/colors.dart';
 import 'package:talkrr/utils/images.dart';
+import 'package:talkrr/core/redux/actions/account_actions.dart';
+import 'package:talkrr/core/redux/stores/app_state.dart';
+import 'package:talkrr/utils/utils.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -10,13 +18,53 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final api _api = api();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController fullnameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool isProcessing = false;
 
   final FocusNode usernameFocusNode = FocusNode();
   final FocusNode fullnameFocusNode = FocusNode();
   final FocusNode passwordFocusNode = FocusNode();
+
+  Future<void> register() async {
+    setState(() {
+      isProcessing = true;
+    });
+    await _api
+        .register(usernameController.text, fullnameController.text,
+            passwordController.text)
+        .then((dynamic response) async {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        Map<String, dynamic> RESPONSE = data['RESPONSE'];
+        if (kDebugMode) {
+          print(RESPONSE);
+        }
+        if (!RESPONSE["isVerified"] &&
+            RESPONSE["isLoggedIn"] &&
+            RESPONSE["isRegistered"]) {
+          final store = StoreProvider.of<AppState>(context);
+          store.dispatch(SetLoggedInAction(RESPONSE["token"]));
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/tabs", (Route<dynamic> route) => false);
+        }
+      } else if (response.statusCode == 400) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        Map<String, dynamic> RESPONSE = data['RESPONSE'];
+        if (kDebugMode) {
+          print(RESPONSE);
+        }
+        showSnackBar(context, RESPONSE["error_message"]);
+      } else {
+        showSnackBar(context, "Something went wrong. Please try again later.");
+      }
+      setState(() {
+        isProcessing = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +84,7 @@ class _RegisterState extends State<Register> {
           ),
           Expanded(
             child: TextField(
+              cursorColor: Colors.white,
               controller: usernameController,
               focusNode: usernameFocusNode,
               style: const TextStyle(
@@ -88,6 +137,7 @@ class _RegisterState extends State<Register> {
           ),
           Expanded(
             child: TextField(
+              cursorColor: Colors.white,
               controller: fullnameController,
               focusNode: fullnameFocusNode,
               style: const TextStyle(
@@ -141,6 +191,7 @@ class _RegisterState extends State<Register> {
           ),
           Expanded(
             child: TextField(
+              cursorColor: Colors.white,
               controller: passwordController,
               focusNode: passwordFocusNode,
               obscureText: true,
@@ -182,7 +233,7 @@ class _RegisterState extends State<Register> {
       return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: MaterialButton(
-          onPressed: () => {},
+          onPressed: isProcessing ? null : () => register(),
           elevation: 0.0,
           highlightElevation: 0.0,
           color: kButtonColor,
@@ -191,14 +242,20 @@ class _RegisterState extends State<Register> {
             borderRadius: BorderRadius.circular(13.0),
           ),
           padding: const EdgeInsets.symmetric(vertical: 18.0),
-          child: const Text(
-            "Continue",
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
+          child: isProcessing
+              ? const SpinKitThreeBounce(
+                  duration: Duration(milliseconds: 800),
+                  color: Colors.white,
+                  size: 20.0,
+                )
+              : const Text(
+                  "Continue",
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
         ),
       );
     }
