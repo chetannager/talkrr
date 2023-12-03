@@ -54,14 +54,22 @@ class _SplashState extends State<Splash> {
       }
 
       String callId = message.data["callId"];
-      Navigator.push(
-        widget.navigatorKey.currentState!.context,
-        MaterialPageRoute(
-          builder: (context) => CallPage(
-            callId,
+
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const Tabs()));
+      });
+
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Navigator.push(
+          widget.navigatorKey.currentState!.context,
+          MaterialPageRoute(
+            builder: (context) => CallPage(
+              callId,
+            ),
           ),
-        ),
-      );
+        );
+      });
     });
   }
 
