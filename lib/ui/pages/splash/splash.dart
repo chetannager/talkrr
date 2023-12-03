@@ -13,7 +13,9 @@ import 'package:talkrr/core/redux/stores/app_state.dart';
 import 'package:talkrr/ui/pages/callpage/callpage.dart';
 
 class Splash extends StatefulWidget {
-  const Splash({super.key});
+  final GlobalKey navigatorKey;
+
+  const Splash(this.navigatorKey, {super.key});
 
   @override
   State<Splash> createState() => _SplashState();
@@ -53,7 +55,7 @@ class _SplashState extends State<Splash> {
 
       String callId = message.data["callId"];
       Navigator.push(
-        context,
+        widget.navigatorKey.currentState!.context,
         MaterialPageRoute(
           builder: (context) => CallPage(
             callId,

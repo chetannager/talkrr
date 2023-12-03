@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -32,14 +31,11 @@ const InitializationSettings initializationSettings = InitializationSettings(
 void onDidReceiveNotificationResponse(
     NotificationResponse notificationResponse) async {
   final String? payload = notificationResponse.payload;
-  final Map<String, dynamic> jsonMap = jsonDecode(payload!);
-  if (notificationResponse.payload != null) {
-    print("notification payload:" + jsonMap['callId']);
-  }
-  // await Navigator.push(
-  //   navigatorKey.currentState!.context,
-  //   MaterialPageRoute<void>(builder: (context) => CallPage(payload!)),
-  // );
+  String callId = payload!.split(": ")[1].replaceAll("}", "");
+  await Navigator.push(
+    navigatorKey.currentState!.context,
+    MaterialPageRoute<void>(builder: (context) => CallPage(callId)),
+  );
 }
 
 Future<void> main() async {
@@ -78,16 +74,16 @@ class MyApp extends StatelessWidget {
         statusBarColor: Colors.transparent,
       ),
     );
-    FirebaseMessaging.instance.getToken().then((token) {
-      if (kDebugMode) {
-        print(token);
-      }
-    });
+    // FirebaseMessaging.instance.getToken().then((token) {
+    //   if (kDebugMode) {
+    //     print(token);
+    //   }
+    // });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
-        if (kDebugMode) {
-          print(message.data.toString());
-        }
+        // if (kDebugMode) {
+        //   print("onMessage: " + message.data.toString());
+        // }
         showLocalPushNotification(message.notification?.title,
             message.notification?.body, message.data.toString());
       }
@@ -118,7 +114,7 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: false,
         ),
-        home: const Splash(),
+        home: Splash(navigatorKey),
         routes: {
           "/tabs": (context) => const Tabs(),
           "/login": (context) => const Login(),

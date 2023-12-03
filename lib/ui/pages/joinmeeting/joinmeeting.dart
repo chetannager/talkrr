@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:talkrr/core/providers/api.dart';
 import 'package:talkrr/ui/pages/callpage/callpage.dart';
 import 'package:talkrr/utils/colors.dart';
+import 'package:talkrr/utils/utils.dart';
 
 class JoinMeeting extends StatefulWidget {
   const JoinMeeting({super.key});
@@ -12,9 +12,9 @@ class JoinMeeting extends StatefulWidget {
 }
 
 class _JoinMeetingState extends State<JoinMeeting> {
-  final api _api = api();
   final TextEditingController meetingIdController = TextEditingController();
   bool isLoading = true;
+  bool isValidMeetingId = false;
   List users = [];
 
   Future<void> joinMeeting() async {
@@ -69,6 +69,11 @@ class _JoinMeetingState extends State<JoinMeeting> {
                   ),
                 ),
               ),
+              onChanged: (value) {
+                setState(() {
+                  isValidMeetingId = isRequired(value);
+                });
+              },
             ),
           )
         ],
@@ -85,9 +90,9 @@ class _JoinMeetingState extends State<JoinMeeting> {
             borderRadius: BorderRadius.circular(13.0),
           ),
           color: kButtonColor,
-          disabledColor: kButtonColor,
+          disabledColor: Colors.grey,
           padding: const EdgeInsets.symmetric(vertical: 18.0),
-          onPressed: () => joinMeeting(),
+          onPressed: isValidMeetingId ? () => joinMeeting() : null,
           child: const Text(
             "Join",
             style: TextStyle(
