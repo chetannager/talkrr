@@ -1,3 +1,5 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -8,6 +10,7 @@ import 'package:talkrr/ui/pages/tabs/tabs.dart';
 import 'package:talkrr/utils/images.dart';
 import 'package:talkrr/core/redux/actions/account_actions.dart';
 import 'package:talkrr/core/redux/stores/app_state.dart';
+import 'package:talkrr/ui/pages/callpage/callpage.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -42,6 +45,22 @@ class _SplashState extends State<Splash> {
         });
       }
     }
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      if (kDebugMode) {
+        print("onMessageOpenedApp: $message");
+      }
+
+      String callId = message.data["callId"];
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CallPage(
+            callId,
+          ),
+        ),
+      );
+    });
   }
 
   @override

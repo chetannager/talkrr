@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:talkrr/ui/pages/callpage/callpage.dart';
 import 'package:talkrr/ui/pages/login/login.dart';
 import 'package:talkrr/ui/pages/register/register.dart';
 import 'package:talkrr/ui/pages/splash/splash.dart';
@@ -16,6 +19,8 @@ import 'core/redux/stores/account_state.dart';
 import 'core/redux/stores/app_state.dart';
 import 'dart:math';
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 const AndroidInitializationSettings initializationSettingsAndroid =
@@ -24,10 +29,26 @@ const InitializationSettings initializationSettings = InitializationSettings(
   android: initializationSettingsAndroid,
 );
 
+void onDidReceiveNotificationResponse(
+    NotificationResponse notificationResponse) async {
+  final String? payload = notificationResponse.payload;
+  final Map<String, dynamic> jsonMap = jsonDecode(payload!);
+  if (notificationResponse.payload != null) {
+    print("notification payload:" + jsonMap['callId']);
+  }
+  // await Navigator.push(
+  //   navigatorKey.currentState!.context,
+  //   MaterialPageRoute<void>(builder: (context) => CallPage(payload!)),
+  // );
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+  );
   final Store<AppState> store = Store<AppState>(
     rootReducers,
     initialState: AppState(
@@ -64,14 +85,18 @@ class MyApp extends StatelessWidget {
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
-        print(message.data.toString());
+        if (kDebugMode) {
+          print(message.data.toString());
+        }
         showLocalPushNotification(message.notification?.title,
             message.notification?.body, message.data.toString());
       }
     });
+
     return StoreProvider<AppState>(
       store: store,
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         themeMode: ThemeMode.dark,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

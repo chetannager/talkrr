@@ -10,8 +10,7 @@ import 'package:talkrr/core/providers/api.dart';
 import 'package:talkrr/core/redux/actions/account_actions.dart';
 import 'package:talkrr/core/redux/stores/app_state.dart';
 import 'package:talkrr/utils/utils.dart';
-
-import '../callpage/callpage.dart';
+import 'package:talkrr/ui/pages/callpage/callpage.dart';
 
 class NewMeeting extends StatefulWidget {
   const NewMeeting({super.key});
@@ -24,6 +23,7 @@ class _NewMeetingState extends State<NewMeeting> {
   final api _api = api();
   bool isLoading = true;
   bool isProcessing = false;
+  String userId = "";
   List users = [];
 
   Future<void> fetchAllUsers() async {
@@ -60,15 +60,16 @@ class _NewMeetingState extends State<NewMeeting> {
     }
   }
 
-  Future<void> createCall(receiverId) async {
+  Future<void> createCall(receiverId, receiverFullName) async {
     setState(() {
       isProcessing = true;
+      userId = receiverId;
     });
     dynamic store = StoreProvider.of<AppState>(context);
     String AUTH_TOKEN = store.state.account.AUTH_TOKEN;
     if (!JwtDecoder.isExpired(AUTH_TOKEN)) {
       await _api
-          .createCall(AUTH_TOKEN, receiverId)
+          .createCall(AUTH_TOKEN, receiverId, receiverFullName)
           .then((dynamic response) async {
         if (response.statusCode == 200) {
           final Map<String, dynamic> data = json.decode(response.body);
@@ -162,14 +163,30 @@ class _NewMeetingState extends State<NewMeeting> {
                                           193, 194, 195, 1),
                                     ),
                                   ),
-                                  trailing: IconButton(
+                                  trailing: MaterialButton(
                                     onPressed: isProcessing
                                         ? null
-                                        : () => createCall(user["userId"]),
-                                    icon: const Icon(
-                                      Icons.video_call_sharp,
-                                      color: Colors.white,
-                                    ),
+                                        : () => createCall(user["userId"],
+                                            user["userFullName"]),
+                                    child: isProcessing
+                                        ? user["userId"] == userId
+                                            ? const SizedBox(
+                                                width: 30.0,
+                                                child: SpinKitThreeBounce(
+                                                  duration: Duration(
+                                                      milliseconds: 800),
+                                                  color: Colors.white,
+                                                  size: 20.0,
+                                                ),
+                                              )
+                                            : const Icon(
+                                                Icons.video_call_sharp,
+                                                color: Colors.white,
+                                              )
+                                        : const Icon(
+                                            Icons.video_call_sharp,
+                                            color: Colors.white,
+                                          ),
                                   ),
                                 ),
                                 const Divider(

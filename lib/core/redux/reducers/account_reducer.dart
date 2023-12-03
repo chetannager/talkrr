@@ -27,6 +27,7 @@ AccountState _setLoggedIn(AccountState prevState, String AUTH_TOKEN) {
 }
 
 AccountState _setLogout(AccountState prevState) {
+  _api.unsubscribeDeviceToAccount(prevState.AUTH_TOKEN);
   removeAuthToken();
   prevState.AUTH_TOKEN = "";
   prevState.isLoggedIn = false;

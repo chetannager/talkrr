@@ -89,9 +89,10 @@ class api {
   }
 
   // Call :: Create Call APIs
-  Future<dynamic> createCall(authToken, receiverId) async {
+  Future<dynamic> createCall(authToken, receiverId, receiverFullName) async {
     final Map<String, dynamic> requestData = {
       "receiverId": receiverId,
+      "receiverFullName": receiverFullName
     };
     if (kDebugMode) {
       print("requestData:${json.encode(requestData)}");
@@ -124,6 +125,30 @@ class api {
       }
       final http.Response response = await http.post(
           Uri.parse("${Endpoints.baseAPIUrl}subscribeDeviceToAccount"),
+          headers: {
+            "Authorization": "Bearer $authToken",
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: json.encode(requestData));
+      if (kDebugMode) {
+        print("statusCode:${response.statusCode}");
+      }
+      return response;
+    });
+  }
+
+  // Login :: UnSubscribe Device to Account APIs
+  Future<dynamic> unsubscribeDeviceToAccount(authToken) async {
+    FirebaseMessaging.instance.getToken().then((value) async {
+      final Map<String, dynamic> requestData = {
+        'registrationToken': value,
+      };
+      if (kDebugMode) {
+        print("requestData:${json.encode(requestData)}");
+      }
+      final http.Response response = await http.post(
+          Uri.parse("${Endpoints.baseAPIUrl}unsubscribeDeviceToAccount"),
           headers: {
             "Authorization": "Bearer $authToken",
             "Content-Type": "application/json",
